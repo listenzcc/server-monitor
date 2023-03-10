@@ -15,6 +15,36 @@ pwd = Path(__file__).parent
 # %%
 cmd = 'ssh 172.18.116.146 ~/bin/uptimes-everything.sh'
 
+
+def ssh_query(cmd=cmd):
+    '''
+    Query the machines' status by ssh
+    '''
+    # Checkout the latest output from the cmd,
+    # the plaintext is the output
+    plaintext = subprocess.check_output(cmd, shell=True)
+    plaintext = plaintext.decode()
+
+    # The results will be appended in the results
+    results = []
+
+    # Parse the plaintext and separate into queries
+    queries = [e.strip() for e in plaintext.split(
+        '::---- New session for machine ----') if e.strip()]
+
+    # Further parse the queries and append it into the results
+    for query in queries:
+        dct = dict()
+        segments = [e.strip() for e in query.split('::----') if e.strip()]
+
+        for seg in segments:
+            head, body = seg.split('\n', 1)
+            dct[head] = body
+
+        results.append(dct)
+
+    return results
+
 # %%
 
 
@@ -86,7 +116,7 @@ class Monitor(object):
         Checkout and append the results into the mongo collection
         '''
         print('Update mongo')
-        documents = self.ssh_query()
+        documents = ssh_query()
 
         col = self.safe_mongo_collection()
 
@@ -155,35 +185,6 @@ class Monitor(object):
         '''
         return self._find(filter={'_id': _id})
 
-    def ssh_query(self):
-        '''
-        Query the machines' status by ssh
-        '''
-        # Checkout the latest output from the cmd,
-        # the plaintext is the output
-        plaintext = subprocess.check_output(cmd, shell=True)
-        plaintext = plaintext.decode()
-
-        # The results will be appended in the results
-        results = []
-
-        # Parse the plaintext and separate into queries
-        queries = [e.strip() for e in plaintext.split(
-            '::---- New session for machine ----') if e.strip()]
-
-        # Further parse the queries and append it into the results
-        for query in queries:
-            dct = dict()
-            segments = [e.strip() for e in query.split('::----') if e.strip()]
-
-            for seg in segments:
-                head, body = seg.split('\n', 1)
-                dct[head] = body
-
-            results.append(dct)
-
-        return results
-
 
 # %%
 if __name__ == '__main__':
@@ -192,19 +193,25 @@ if __name__ == '__main__':
 
     while True:
         inp = input('>> ')
+        print('[---- Got cmd: {} ----]'.format(inp))
 
         if inp == 'q':
             break
 
         if 'fetchall' in inp:
             pprint(monitor.fetchall_mongo())
+            continue
 
         if 'summary' in inp:
             pprint(monitor.summary_mongo())
+            continue
 
         if 'last' in inp:
             for e in monitor.summary_mongo():
                 pprint(monitor.checkout_mongo_by_id(e['last']))
+            continue
+
+        print('[---- Invalid cmd, doing nothing. ----]')
 
     print('Monitor stops')
 
