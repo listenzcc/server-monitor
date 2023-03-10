@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<head>
+    <meta name="viewport" charset="utf-8" content="width=device-width, initial-scale=1.0">
+    <title>Service monitor</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
+
+    <script type="text/javascript" src="src/script.js"></script>
+
+    <link rel="stylesheet" href="src/style.css">
+
+    <style type="text/css">
+        p#style-check {
+            color: blueviolet
+        }
+
+        textarea.ta1 {
+            width: 90%;
+            height: 600px
+        }
+
+        div {
+            max-width: 12in
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>Service monitor</h1>
+    <div>
+        <p id="style-check">Style check</p>
+        <p> no style </p>
+    </div>
+
+
+    <div>
+        <h2> Graph-2 </h2>
+        <div id="plotDiv"></div>
+    </div>
+
+    <div>
+        <h2> Summary </h2>
+        <textarea class="ta1" id="summary-textarea"></textarea>
+    </div>
+
+
+    <div>
+        <h2> Last </h2>
+        <textarea class="ta1" id="last-textarea"></textarea>
+    </div>
+
+    <div>
+        <h2> Graph </h2>
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        update1();
+        // Update every 10 seconds
+        setInterval(update1, 10 * 1000)
+        update2();
+        update3();
+    </script>
+</body>
+
+</html>

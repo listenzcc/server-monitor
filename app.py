@@ -30,9 +30,16 @@ def serializable(list_of_dict):
 # %%
 
 
-@app.route('/')
-def index():
-    return 'Hello, world'
+@app.route('/html/<page>')
+def html(page):
+    print('Request page {}'.format(page))
+    return open('html/{}'.format(page)).read()
+
+
+@app.route('/html/src/<src>')
+def src(src):
+    print('Request src {}'.format(src))
+    return open('html/src/{}'.format(src)).read()
 
 
 @app.route('/mongo/<page>')
