@@ -96,7 +96,7 @@ class Monitor(object):
     # Flexible api
     # It will call the collection's method to generate the
     # very flexible operations.
-    def find(self, filter=None, projection=None, sort=None, limit=None):
+    def _find(self, filter=None, projection=None, sort=None, limit=0):
         col = self.safe_mongo_collection()
 
         kwargs = dict(
@@ -111,9 +111,10 @@ class Monitor(object):
         except Exception:
             traceback.print_exc()
 
+        # Error occurs
         return
 
-    def aggregate(self, pipeline):
+    def _aggregate(self, pipeline):
         col = self.safe_mongo_collection()
 
         # Correct the single operation
@@ -121,11 +122,12 @@ class Monitor(object):
             pipeline = [pipeline]
 
         try:
-            return [e for e in tqdm(col.aggregate(pipeline, 'Aggregate the mongodb'))]
+            return [e for e in tqdm(col.aggregate(pipeline), 'Aggregate the mongodb')]
         except Exception:
             traceback.print_exc()
 
-        pass
+        # Error occurs
+        return
 
     # -------------------------------------------------------
     # Useful api
@@ -133,31 +135,25 @@ class Monitor(object):
         '''
         fetch all the documents from the mongo database
         '''
-        col = self.safe_mongo_collection()
-        return [e for e in tqdm(col.find())]
+        return self._find()
 
     def summary_mongo(self):
         '''
         Get the summary of the mongo collection
         '''
-
-        col = self.safe_mongo_collection()
-
-        return [e for e in tqdm(col.aggregate([{
+        return self._aggregate({
             '$group': {
                 '_id': '$machineIP',
                 'count': {'$sum': 1},
                 'last': {'$last': "$_id"}
             }
-        }]))]
+        })
 
     def checkout_mongo_by_id(self, _id):
         '''
         Checkout the document by the _id in the mongo collection
         '''
-        print(_id)
-        col = self.safe_mongo_collection()
-        return [e for e in col.find({'_id': _id})]
+        return self._find(filter={'_id': _id})
 
     def ssh_query(self):
         '''
