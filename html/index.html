@@ -19,7 +19,7 @@
 
         textarea.ta1 {
             width: 90%;
-            height: 600px
+            height: 400px
         }
 
         div {
@@ -33,13 +33,21 @@
     <h1>Service monitor</h1>
     <div>
         <p id="style-check">Style check</p>
-        <p> no style </p>
+        <button id="update-btn1" onclick="update1(); update3()">Update</button>
     </div>
 
+    <div>
+        <h2 id="uptime-h2"> Uptime </h2>
+        <p>Scale load range (in case some machine is overloaded)</p>
+        <input type="range" id="uptime-slider-1" min="20" max="100" value="100" onchange="update3()"
+            ondrag="() => {}" />
+        <div id="plotDiv"></div>
+    </div>
 
     <div>
-        <h2> Graph-2 </h2>
-        <div id="plotDiv"></div>
+        <h2 id="last-status-h2"> Last status </h2>
+        <div id="last-status-div"></div>
+        <!-- <textarea class="ta1" id="last-textarea"></textarea> -->
     </div>
 
     <div>
@@ -47,23 +55,17 @@
         <textarea class="ta1" id="summary-textarea"></textarea>
     </div>
 
-
-    <div>
-        <h2> Last </h2>
-        <textarea class="ta1" id="last-textarea"></textarea>
-    </div>
-
-    <div>
+    <!-- <div>
         <h2> Graph </h2>
         <canvas id="myChart"></canvas>
-    </div>
+    </div> -->
 
     <script>
         update1();
-        // Update every 10 seconds
-        setInterval(update1, 10 * 1000)
-        update2();
         update3();
+        // Update every 10 seconds
+        setInterval(() => { update1(); update3(); }, 10 * 1000)
+        // update2();
     </script>
 </body>
 

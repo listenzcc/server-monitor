@@ -79,6 +79,7 @@ def mongo(page):
 
 # %%
 if __name__ == '__main__':
-    app.run()
+    # Make sure the app is accessible for the remote client
+    app.run(debug=True, host='0.0.0.0')
 
 # %%
