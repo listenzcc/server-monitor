@@ -24,6 +24,7 @@ def ssh_query(cmd=cmd):
     # the plaintext is the output
     plaintext = subprocess.check_output(cmd, shell=True)
     plaintext = plaintext.decode()
+    print(plaintext)
 
     # The results will be appended in the results
     results = []
@@ -101,7 +102,8 @@ class Monitor(object):
             while True:
                 try:
                     self.update_mongo()
-                except Exception:
+                except Exception as err:
+                    print('Error happens', err)
                     traceback.print_exc()
 
                 # Sleep for 60 seconds

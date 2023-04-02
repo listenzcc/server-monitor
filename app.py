@@ -13,6 +13,7 @@ from monitorloop.monitor import Monitor
 app = Flask(__name__)
 
 monitor = Monitor()
+monitor.loop_update()
 
 # %%
 

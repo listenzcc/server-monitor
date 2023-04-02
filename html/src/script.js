@@ -55,8 +55,11 @@ function update1() {
   });
 }
 
+// 60 minutes x 240 hours x 5 machines
+const mongoFetchallLimit = 60 * 240 * 5
+
 function update3() {
-  d3.json("/mongo/fetchall?sort_timestamp=-1&limit=10000").then((rawJson) => {
+  d3.json(`/mongo/fetchall?sort_timestamp=-1&limit=${mongoFetchallLimit}`).then((rawJson) => {
     console.log("Update mongo/fetchall session by", rawJson);
 
     document.getElementById("uptime-h2").innerHTML = "Uptime: " + new Date();

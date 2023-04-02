@@ -16,28 +16,48 @@ db = client["server-monitor-db"]
 # Create or open the collection
 collection = db['server-monitor-col']
 
-res = collection.insert_many(queries)
-res
+# Insert the queries defined in above
+# res = collection.insert_many(queries)
+# res
 
 # %%
 
 # %%
 [e for e in collection.find(dict(machineIP='172.18.116.146'))]
+
+
 # %%
 
-latest = [e for e in collection.aggregate([
+aggregate = [e for e in collection.aggregate([
     {
         '$group': {
             '_id': '$machineIP',
             'count': {'$sum': 1},
-            'last': {'$last': "$_id"}
+            'last': {'$last': "$_id"},
+            'first': {'$first': '$_id'}
         }
     }
 ])]
 
-latest
-# %%
+aggregate
 
-[e for e in collection.find({'_id': latest[0]['last']})]
+# %%
+for group in aggregate:
+    print(group)
+    cursor = collection.find({'_id': group['first']})
+    print([e for e in cursor])
+
+    # !!! Delete the first record
+    # collection.delete_one({'_id': group['first']})
+
+
+# %%
+[e for e in collection.find({'_id': aggregate[0]['first']})]
+
+# %%
+[e for e in collection.find({'_id': aggregate[0]['last']})]
+
+# %%
+aggregate[0]['first']
 
 # %%
